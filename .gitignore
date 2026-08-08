@@ -1,0 +1,8 @@
+# Dependencies
+node_modules
+
+# Generated
+dist
+
+# Release notes, written per release and kept out of the history
+RELEASE-NOTES-*.md
