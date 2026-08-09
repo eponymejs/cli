@@ -9,7 +9,7 @@
     "node": ">=20.12.0"
   },
   "bin": {
-    "eponyme": "./dist/cli.mjs"
+    "eponyme": "dist/cli.mjs"
   },
   "exports": {
     ".": {
