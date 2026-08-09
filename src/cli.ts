@@ -6,7 +6,7 @@ import { checkCommand, initCommand } from './commands.js'
 const main = defineCommand({
   meta: {
     name: 'eponyme',
-    version: '0.1.0',
+    version: '0.1.1',
     description: 'Install and verify Eponyme Prisma persistence.',
   },
   subCommands: {
