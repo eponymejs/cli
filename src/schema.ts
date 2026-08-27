@@ -1,4 +1,4 @@
-export const EPONYME_SCHEMA_VERSION = 2
+export const EPONYME_SCHEMA_VERSION = 3
 
 export const EPONYME_MODEL_NAMES = [
   'Eponyme',
@@ -9,6 +9,8 @@ export const EPONYME_MODEL_NAMES = [
   'EponymeUserSession',
   'EponymeFormSubmission',
   'EponymeRateLimit',
+  'EponymeAuditEvent',
+  'EponymeMaintenanceState',
   'EponymeSchema',
 ] as const
 
@@ -21,6 +23,8 @@ export const EPONYME_PRISMA_DELEGATES = [
   'eponymeUserSession',
   'eponymeFormSubmission',
   'eponymeRateLimit',
+  'eponymeAuditEvent',
+  'eponymeMaintenanceState',
   'eponymeSchema',
 ] as const
 
@@ -56,6 +60,21 @@ export const EPONYME_DATABASE_COLUMNS = {
   eponyme_user_sessions: ['id', 'tokenHash', 'userId', 'expiresAt', 'createdAt'],
   eponyme_form_submissions: ['id', 'formName', 'data', 'createdAt'],
   eponyme_rate_limits: ['key', 'count', 'expiresAt'],
+  eponyme_audit_events: [
+    'id',
+    'occurredAt',
+    'actorUserId',
+    'actorUsername',
+    'action',
+    'outcome',
+    'resourceType',
+    'resourceName',
+    'targetUserId',
+    'ipAddress',
+    'userAgent',
+    'metadata',
+  ],
+  eponyme_maintenance_state: ['key', 'lastRunAt'],
   _eponyme_schema: ['key', 'version', 'updatedAt'],
 } as const
 
