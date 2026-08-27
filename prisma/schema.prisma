@@ -69,6 +69,7 @@ model EponymeUser {
   updatedAt           DateTime             @updatedAt
   sessions            EponymeUserSession[]
   versions            EponymeVersion[]
+  auditEvents         EponymeAuditEvent[]
 
   @@index([role, active])
   @@map("eponyme_users")
@@ -104,6 +105,35 @@ model EponymeRateLimit {
 
   @@index([expiresAt])
   @@map("eponyme_rate_limits")
+}
+
+model EponymeAuditEvent {
+  id            String       @id
+  occurredAt    DateTime     @default(now())
+  actorUserId   String?
+  actorUsername String?
+  action        String
+  outcome       String
+  resourceType  String?
+  resourceName  String?
+  targetUserId  String?
+  ipAddress     String?
+  userAgent     String?
+  metadata      Json?
+  actor         EponymeUser? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([occurredAt])
+  @@index([actorUserId, occurredAt])
+  @@index([action, occurredAt])
+  @@index([resourceType, resourceName, occurredAt])
+  @@map("eponyme_audit_events")
+}
+
+model EponymeMaintenanceState {
+  key       String   @id
+  lastRunAt DateTime
+
+  @@map("eponyme_maintenance_state")
 }
 
 model EponymeSchema {
