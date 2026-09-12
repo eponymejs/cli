@@ -57,6 +57,25 @@ describe('initProject', () => {
     expect(schema).toContain('scheduledUnpublishAt DateTime?')
   })
 
+  // A brace inside a default value or a comment is text: counting it would end the model mid-string and
+  // leave the rest of the literal orphaned in the schema.
+  it('replaces an unmanaged model whose values contain braces', async () => {
+    const cwd = await createProject(
+      `${BASE_SCHEMA}\nmodel Eponyme {\n  name String @id\n  note String @default("}")\n  // a } in a comment\n}\n\nmodel AppOwned {\n  id String @id\n}\n`,
+    )
+
+    const result = await initProject({ cwd, force: true })
+    const schema = await readFile(join(cwd, 'prisma/schema.prisma'), 'utf8')
+
+    expect(result.schemaAction).toBe('updated')
+    expect(schema.match(/model Eponyme \{/g)).toHaveLength(1)
+    expect(schema).not.toContain('@default("}")')
+    // Nothing of the removed model is left behind, and the application's own model is untouched.
+    expect(schema.startsWith('generator client {')).toBe(true)
+    expect(schema).not.toContain('a } in a comment')
+    expect(schema).toContain('model AppOwned {')
+  })
+
   it('does not overwrite a migration with different contents', async () => {
     const cwd = await createProject()
     const migrationDirectory = join(cwd, 'prisma/migrations/20260808010000_add_eponyme_schema_version')

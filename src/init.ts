@@ -39,11 +39,38 @@ function findModelRange(source: string, modelName: string) {
   const start = match.index + (match[1] ? 1 : 0)
   const openBrace = source.indexOf('{', start)
   let depth = 0
+  let inString = false
+  let inComment = false
 
+  // Braces inside a string or a comment are text, not structure: `note String @default("}")` is a valid
+  // field, and counting its brace would cut the model in half.
   for (let index = openBrace; index < source.length; index++) {
-    if (source[index] === '{')
+    const character = source[index]
+
+    if (inComment) {
+      if (character === '\n')
+        inComment = false
+      continue
+    }
+    if (inString) {
+      if (character === '\\')
+        index++
+      else if (character === '"')
+        inString = false
+      continue
+    }
+    if (character === '"') {
+      inString = true
+      continue
+    }
+    if (character === '/' && source[index + 1] === '/') {
+      inComment = true
+      continue
+    }
+
+    if (character === '{')
       depth++
-    else if (source[index] === '}')
+    else if (character === '}')
       depth--
 
     if (depth === 0)
